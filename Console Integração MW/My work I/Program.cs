@@ -15,7 +15,6 @@ namespace ConsoleIntegração
         {
 
             int x;
-            double desconto;
 
             Console.WriteLine("Qual oportunidade você deseja aplicar o desconto?");
             String oportunidadeId = Console.ReadLine(); 
@@ -30,34 +29,41 @@ namespace ConsoleIntegração
 
             foreach (Entity contactCRM in contactsCRM.Entities)
             {
-                //Valor colocado na variável desconto
-                desconto = (double)contactCRM["conta.g07_niveldocliente"]; 
-                Console.WriteLine("O desconto é de: " + contactCRM["conta.g07_niveldocliente"].ToString());
+                //string nivel = (string)((AliasedValue)contactCRM["conta.g07_niveldocliente"]).Value;
+
+                //Perceba que não consegui transformar o nivel do cliente em texto ou int então não consegui utiliza-lo
+                Console.WriteLine("O desconto é de: " + contactCRM["conta.g07_niveldocliente"]);
+
+                //Money bruto = (Money)((AliasedValue)contactCRM["totallineitemamount"]).Value;
+
+                //Colocando valores fixos para que tenha algo para dar update na tabela, mas seriam substituidos se o cast funcionasse
+                Double bruto = 200;
+                Double nivel = 3;
+                Double descount = bruto * (nivel/ 100);
+
+                do
+                {
+                    x = 1;
+                    Console.WriteLine("Você deseja atualizar essa oportunidade? Y/N");
+                    char resp = (char)Console.Read();
+                    if (resp == 'Y' || resp == 'y')
+                    {
+                        //Update da oportunidade
+                        Opportunity opportunity = new Opportunity(service);
+                        opportunity.UpdateOpportunity(descount, oportunidadeId);
+                        Console.WriteLine("Valor atualizado!");
+                    }
+                    else if (resp == 'N' || resp == 'n')
+                    {
+                        Console.WriteLine("Ok! Obrigado!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Valor inserido não é valido");
+                        x = 0;
+                    }
+                } while (x == 0);
             }
-            //Gambiarra pois o desconto não está pegando o valor do banco
-            desconto = 0.03;
-            do
-            {
-                x = 1;
-                Console.WriteLine("Você deseja atualizar essa oportunidade? Y/N");
-                char resp = (char)Console.Read();
-                if (resp == 'Y' || resp == 'y')
-                {
-                    //Update da oportunidade
-                    Opportunity opportunity = new Opportunity(service);
-                    opportunity.UpdateOpportunity(desconto);
-                }
-                else if (resp == 'N' || resp == 'n')
-                {
-                    Console.WriteLine("Ok! Obrigado!");
-                }
-                else
-                {
-                    Console.WriteLine("Valor inserido não é valido");
-                    x = 0;
-                    //Tem algum erro que faz com que ele se repita mais vezes
-                }
-            } while (x == 0);
             Console.ReadKey();
         }
     }

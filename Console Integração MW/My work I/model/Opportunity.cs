@@ -19,10 +19,11 @@ namespace ConsoleIntegração.model
             this.Service = service;
         }
 
-        public void UpdateOpportunity(double desconto)
+        public void UpdateOpportunity(double desconto, string oportunidadeId)
         {
             //Update da table oportunidade no campo desconto recebendo 
             Entity opportunity = new Entity(this.TableName);
+            opportunity.Id = new Guid(oportunidadeId);
             opportunity["discountamount"] = desconto;
             this.Service.Update(opportunity);
         }
